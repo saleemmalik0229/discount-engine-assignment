@@ -75,7 +75,7 @@ export default function CartSummaryPanel({ summary }) {
   const totalSavings = itemSavings + cartDiscount
 
   return (
-    <section className="results-panel page-section" aria-labelledby="results-heading">
+    <section id="results-section" className="results-panel page-section" aria-labelledby="results-heading">
       <div className="results-panel__header">
         <h2 id="results-heading" className="results-panel__title">
           Results

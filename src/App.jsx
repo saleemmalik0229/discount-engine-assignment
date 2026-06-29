@@ -4,7 +4,7 @@
  * Thin orchestration layer: manages state, wires adapters → engine → UI.
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import CsvUploader from './components/CsvUploader.jsx'
 import DataTable from './components/DataTable.jsx'
 import ErrorBanner from './components/ErrorBanner.jsx'
@@ -184,6 +184,36 @@ export default function App() {
 
   const summary = useDiscountEngine(rules, cartItems, calculated)
 
+  // Add useEffect to auto-scroll when calculated succeeds
+  useEffect(() => {
+    if (calculated && summary) {
+      const timer = setTimeout(() => {
+        const element = document.getElementById('results-section')
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' })
+        }
+      }, 100)
+      return () => clearTimeout(timer)
+    }
+  }, [calculated, summary])
+
+  // Scroll to section helper
+  const handleScrollTo = (id) => {
+    const element = document.getElementById(id)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
+  // Handle click on Calculate Discounts
+  const handleCalculateClick = () => {
+    if (!canCalculate) {
+      handleScrollTo('upload-section')
+    } else {
+      handleCalculate()
+    }
+  }
+
   function handleRulesLoad(csvText, fileName) {
     const { data, errors } = parseRulesCSV(csvText)
     setRules(data)
@@ -205,7 +235,6 @@ export default function App() {
   }
 
   const canCalculate = rules.length > 0 && cartItems.length > 0
-  const hasAnyData = rules.length > 0 || cartItems.length > 0
 
   const totalSavings = summary
     ? summary.items.reduce((s, i) => s + i.totalDiscount, 0) + (summary.cartOffer?.discountAmount ?? 0)
@@ -214,11 +243,55 @@ export default function App() {
 
   return (
     <div className="app">
+      <nav className="sticky-navbar">
+        <div className="sticky-navbar__container">
+          <span className="sticky-navbar__brand">
+            <span className="sticky-navbar__brand-dot"></span>
+            Discount Engine
+          </span>
+          <div className="sticky-navbar__links">
+            <button
+              type="button"
+              className="navbar-link"
+              onClick={() => handleScrollTo('rules-upload')}
+            >
+              Upload Rules
+            </button>
+            <button
+              type="button"
+              className="navbar-link"
+              onClick={() => handleScrollTo('cart-upload')}
+            >
+              Upload Cart
+            </button>
+            <button
+              type="button"
+              className="navbar-link navbar-link--calculate"
+              onClick={handleCalculateClick}
+            >
+              Calculate
+            </button>
+            <a
+              href="https://github.com/saleemmalik0229/discount-engine-assignment"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="navbar-link navbar-link--github"
+              aria-label="GitHub Repository"
+            >
+              <svg className="icon-github" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+              </svg>
+              GitHub
+            </a>
+          </div>
+        </div>
+      </nav>
+
       <main className="app-main" id="main-content">
         <header className="hero">
           <span className="hero__eyebrow">Pricing Engine</span>
           <h1 className="hero__title">Discount Engine</h1>
-          <p className="hero__subtitle">Commerce discount operations dashboard</p>
+          <p className="hero__subtitle">Commerce Discount Operations Dashboard</p>
           <p className="hero__description">
             Upload discount rules and shopping cart CSVs to calculate the optimal customer pricing
             using stackable and non-stackable discount rules.
@@ -227,10 +300,7 @@ export default function App() {
             <button
               type="button"
               className="btn-calculate"
-              onClick={handleCalculate}
-              disabled={!canCalculate}
-              aria-disabled={!canCalculate}
-              aria-describedby={!canCalculate ? 'calculate-hint' : undefined}
+              onClick={handleCalculateClick}
             >
               Calculate Discounts
             </button>
@@ -241,6 +311,44 @@ export default function App() {
             )}
           </div>
         </header>
+
+        <div className="quick-actions-bar">
+          <button
+            type="button"
+            className="btn-quick"
+            onClick={() => handleScrollTo('rules-upload')}
+          >
+            <RulesIcon />
+            <span>Upload Rules</span>
+          </button>
+          <button
+            type="button"
+            className="btn-quick"
+            onClick={() => handleScrollTo('cart-upload')}
+          >
+            <CartIcon />
+            <span>Upload Cart</span>
+          </button>
+          <button
+            type="button"
+            className="btn-quick btn-quick--calculate"
+            onClick={handleCalculateClick}
+          >
+            <SavingsIcon />
+            <span>Calculate Discounts</span>
+          </button>
+          <a
+            href="https://github.com/saleemmalik0229/discount-engine-assignment"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-quick btn-quick--github"
+          >
+            <svg className="icon-github" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+            </svg>
+            <span>GitHub</span>
+          </a>
+        </div>
 
         <section className="kpi-grid page-section" aria-label="Dashboard metrics">
           <article className="kpi-card" aria-labelledby="kpi-rules">
@@ -309,95 +417,65 @@ export default function App() {
           </article>
         </section>
 
-        {!hasAnyData && (
-          <section className="empty-state page-section" aria-labelledby="empty-state-title">
-            <div className="empty-state__icon-ring">
-              <EmptyIllustration />
-            </div>
-            <h2 id="empty-state-title" className="empty-state__title">
-              Start with your CSV files
-            </h2>
-            <p className="empty-state__text">Upload discount rules and cart data to preview inputs and calculate optimized pricing.</p>
-            <ol className="empty-state__steps">
-              <li className="empty-state__step">
-                <span className="empty-state__step-num" aria-hidden="true">
-                  1
-                </span>
-                Upload rules.csv
-              </li>
-              <li className="empty-state__step">
-                <span className="empty-state__step-num" aria-hidden="true">
-                  2
-                </span>
-                Upload cart.csv
-              </li>
-              <li className="empty-state__step">
-                <span className="empty-state__step-num" aria-hidden="true">
-                  3
-                </span>
-                Calculate discounts
-              </li>
-            </ol>
-          </section>
-        )}
-
-        <section className="upload-grid page-section" aria-label="File uploads">
-          <div className="upload-card-wrapper">
-            <div className="upload-card-wrapper__header">
-              <div>
-                <h2 className="upload-card-wrapper__title">Discount Rules</h2>
-                <p className="upload-card-wrapper__hint">Discount scope, value, thresholds, and stacking</p>
-              </div>
-              <span className="upload-card-wrapper__badge">CSV</span>
-            </div>
-            <CsvUploader
-              label="rules.csv"
-              description="Drag & drop or click to upload discount rules"
-              onLoad={handleRulesLoad}
-              hasData={rules.length > 0}
-              fileName={rulesFileName}
-            />
-            <ErrorBanner errors={rulesErrors} />
-            {rules.length > 0 && (
-              <>
-                <div className="upload-card-wrapper__status" aria-live="polite">
-                  <CheckIcon />
-                  {rules.length} rule{rules.length !== 1 ? 's' : ''} loaded
+        <section id="upload-section" className="upload-section page-section" aria-label="File uploads">
+          <div className="upload-grid">
+            <div id="rules-upload" className="upload-card-wrapper">
+              <div className="upload-card-wrapper__header">
+                <div>
+                  <h2 className="upload-card-wrapper__title">Discount Rules</h2>
+                  <p className="upload-card-wrapper__hint">Discount scope, value, thresholds, and stacking</p>
                 </div>
-                {rulesFileName && (
-                  <p className="upload-card-wrapper__filename">{rulesFileName}</p>
-                )}
-              </>
-            )}
-          </div>
-
-          <div className="upload-card-wrapper">
-            <div className="upload-card-wrapper__header">
-              <div>
-                <h2 className="upload-card-wrapper__title">Cart Items</h2>
-                <p className="upload-card-wrapper__hint">Products, brands, platforms, and base prices</p>
+                <span className="upload-card-wrapper__badge">CSV</span>
               </div>
-              <span className="upload-card-wrapper__badge">CSV</span>
+              <CsvUploader
+                label="rules.csv"
+                description="Drag & drop or click to upload discount rules"
+                onLoad={handleRulesLoad}
+                hasData={rules.length > 0}
+                fileName={rulesFileName}
+              />
+              <ErrorBanner errors={rulesErrors} />
+              {rules.length > 0 && (
+                <>
+                  <div className="upload-card-wrapper__status" aria-live="polite">
+                    <CheckIcon />
+                    {rules.length} rule{rules.length !== 1 ? 's' : ''} loaded
+                  </div>
+                  {rulesFileName && (
+                    <p className="upload-card-wrapper__filename">{rulesFileName}</p>
+                  )}
+                </>
+              )}
             </div>
-            <CsvUploader
-              label="cart.csv"
-              description="Drag & drop or click to upload cart items"
-              onLoad={handleCartLoad}
-              hasData={cartItems.length > 0}
-              fileName={cartFileName}
-            />
-            <ErrorBanner errors={cartErrors} />
-            {cartItems.length > 0 && (
-              <>
-                <div className="upload-card-wrapper__status" aria-live="polite">
-                  <CheckIcon />
-                  {cartItems.length} cart item{cartItems.length !== 1 ? 's' : ''} loaded
+
+            <div id="cart-upload" className="upload-card-wrapper">
+              <div className="upload-card-wrapper__header">
+                <div>
+                  <h2 className="upload-card-wrapper__title">Cart Items</h2>
+                  <p className="upload-card-wrapper__hint">Products, brands, platforms, and base prices</p>
                 </div>
-                {cartFileName && (
-                  <p className="upload-card-wrapper__filename">{cartFileName}</p>
-                )}
-              </>
-            )}
+                <span className="upload-card-wrapper__badge">CSV</span>
+              </div>
+              <CsvUploader
+                label="cart.csv"
+                description="Drag & drop or click to upload cart items"
+                onLoad={handleCartLoad}
+                hasData={cartItems.length > 0}
+                fileName={cartFileName}
+              />
+              <ErrorBanner errors={cartErrors} />
+              {cartItems.length > 0 && (
+                <>
+                  <div className="upload-card-wrapper__status" aria-live="polite">
+                    <CheckIcon />
+                    {cartItems.length} cart item{cartItems.length !== 1 ? 's' : ''} loaded
+                  </div>
+                  {cartFileName && (
+                    <p className="upload-card-wrapper__filename">{cartFileName}</p>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </section>
 
