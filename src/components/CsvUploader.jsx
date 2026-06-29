@@ -7,11 +7,54 @@
  * @param {{ label: string, description: string, onLoad: (csvText: string, fileName: string) => void, hasData: boolean, fileName: string }} props
  */
 
-import { useRef, useState } from 'react'
+import { useId, useRef, useState } from 'react'
+
+function UploadIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M12 16V4m0 0l-4 4m4-4l4 4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+function DragIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+function SuccessIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M20 6L9 17l-5-5"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
 
 export default function CsvUploader({ label, description, onLoad, hasData, fileName }) {
   const inputRef = useRef(null)
   const [dragOver, setDragOver] = useState(false)
+  const descId = useId()
 
   function readFile(file) {
     if (!file || !file.name.toLowerCase().endsWith('.csv')) return
@@ -45,19 +88,23 @@ export default function CsvUploader({ label, description, onLoad, hasData, fileN
     readFile(e.dataTransfer.files[0])
   }
 
-  const borderColor = dragOver ? '#FF5800' : hasData ? '#1e5c2c' : '#CECECE'
-  const background = dragOver ? '#fff8f3' : hasData ? '#f0faf2' : '#fafafa'
+  const statusText = hasData
+    ? `File uploaded: ${fileName}. Select or press Enter to replace.`
+    : dragOver
+      ? 'Release to upload this CSV'
+      : description
+
+  const classNames = [
+    'csv-uploader',
+    dragOver && 'csv-uploader--dragover',
+    hasData && 'csv-uploader--success',
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   return (
     <div
-      style={{
-        border: `2px dashed ${borderColor}`,
-        borderRadius: 6,
-        padding: '1rem 1.2rem',
-        background,
-        cursor: 'pointer',
-        transition: 'border-color 0.15s, background 0.15s',
-      }}
+      className={classNames}
       onClick={() => inputRef.current?.click()}
       onDragOver={handleDragOver}
       onDragEnter={handleDragOver}
@@ -72,6 +119,7 @@ export default function CsvUploader({ label, description, onLoad, hasData, fileN
         }
       }}
       aria-label={`Upload ${label}`}
+      aria-describedby={descId}
     >
       <input
         ref={inputRef}
@@ -79,30 +127,21 @@ export default function CsvUploader({ label, description, onLoad, hasData, fileN
         accept=".csv,text/csv"
         style={{ display: 'none' }}
         onChange={handleFileInput}
+        aria-hidden="true"
+        tabIndex={-1}
       />
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-        <span style={{ fontSize: 20 }} aria-hidden="true">
-          {hasData ? '✅' : '📄'}
+      <div className="csv-uploader__inner">
+        <div className="csv-uploader__icon-wrap">
+          {hasData ? <SuccessIcon /> : dragOver ? <DragIcon /> : <UploadIcon />}
+        </div>
+        <p className="csv-uploader__label">{label}</p>
+        <p id={descId} className="csv-uploader__description">
+          {hasData ? fileName : dragOver ? 'Drop the CSV here' : description}
+        </p>
+        <span className="csv-uploader__action" aria-hidden="true">
+          {hasData ? 'Replace CSV' : 'Select CSV'}
         </span>
-        <div>
-          <div style={{ fontWeight: 700, fontSize: 13, color: '#131A48' }}>{label}</div>
-          <div style={{ fontSize: 11, color: '#888', marginTop: 2 }}>
-            {hasData ? fileName : dragOver ? 'Drop CSV here' : description}
-          </div>
-        </div>
-        <div style={{ marginLeft: 'auto' }}>
-          <span
-            style={{
-              fontSize: 11,
-              fontWeight: 700,
-              color: hasData ? '#1e5c2c' : '#FF5800',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-            }}
-          >
-            {hasData ? 'Change' : 'Upload'}
-          </span>
-        </div>
+        <span className="visually-hidden">{statusText}</span>
       </div>
     </div>
   )

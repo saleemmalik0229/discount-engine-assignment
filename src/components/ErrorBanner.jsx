@@ -6,27 +6,36 @@
  * @param {{ errors: string[] }} props
  */
 
+function AlertIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
 export default function ErrorBanner({ errors }) {
   if (!errors || errors.length === 0) return null
+
   return (
-    <div
-      style={{
-        background: '#fce8e8',
-        border: '1px solid #e57373',
-        borderLeft: '3px solid #c0392b',
-        borderRadius: 4,
-        padding: '0.6rem 0.9rem',
-        marginTop: '0.5rem',
-      }}
-    >
-      <div style={{ fontWeight: 700, fontSize: 12, color: '#8a1a1a', marginBottom: 4 }}>
-        {errors.length} issue{errors.length > 1 ? 's' : ''} found
-      </div>
-      {errors.map((e, i) => (
-        <div key={i} style={{ fontSize: 12, color: '#5a1010', marginTop: 2 }}>
-          {e}
-        </div>
-      ))}
+    <div className="error-banner" role="alert" aria-live="polite">
+      <p className="error-banner__title">
+        <AlertIcon />
+        {errors.length} CSV issue{errors.length > 1 ? 's' : ''}
+      </p>
+      <ul className="error-banner__list">
+        {errors.map((e, i) => (
+          <li key={i} className="error-banner__item">
+            {e}
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

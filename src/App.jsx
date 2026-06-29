@@ -14,16 +14,49 @@ import { parseRulesCSV, parseCartCSV } from './adapters/index.js'
 import { useDiscountEngine } from './hooks/useDiscountEngine.js'
 
 const RULES_COLUMNS = [
-  { key: 'ruleId', label: 'Rule ID' },
-  { key: 'scope', label: 'Scope', render: (v) => v.charAt(0).toUpperCase() + v.slice(1) },
-  { key: 'appliesTo', label: 'Applies To', render: (v) => v ?? '—' },
-  { key: 'type', label: 'Type', render: (v) => v.charAt(0).toUpperCase() + v.slice(1) },
+  {
+    key: 'ruleId',
+    label: 'Rule ID',
+    render: (v) => <span className="badge badge--rule-id">{v}</span>,
+  },
+  {
+    key: 'scope',
+    label: 'Scope',
+    render: (v) => (
+      <span className="badge badge--scope">{v.charAt(0).toUpperCase() + v.slice(1)}</span>
+    ),
+  },
+  {
+    key: 'appliesTo',
+    label: 'Applies To',
+    render: (v) =>
+      v ? <span className="badge badge--brand">{v}</span> : <span className="badge badge--no-offer">—</span>,
+  },
+  {
+    key: 'type',
+    label: 'Type',
+    render: (v) => (
+      <span className="badge badge--type">{v.charAt(0).toUpperCase() + v.slice(1)}</span>
+    ),
+  },
   {
     key: 'value',
     label: 'Value',
-    render: (v, row) => (row.type === 'percentage' ? `${v}% off` : `Rs.${v} off`),
+    render: (v, row) => (
+      <span className="badge badge--discount">
+        {row.type === 'percentage' ? `${v}% off` : `Rs.${v} off`}
+      </span>
+    ),
   },
-  { key: 'stackable', label: 'Stackable', render: (v) => (v ? 'Yes' : 'No') },
+  {
+    key: 'stackable',
+    label: 'Stackable',
+    render: (v) => (
+      <span className={`badge ${v ? 'badge--stackable-yes' : 'badge--stackable-no'}`}>
+        {v ? 'Yes' : 'No'}
+      </span>
+    ),
+  },
   {
     key: 'minCartValue',
     label: 'Min Cart',
@@ -32,54 +65,110 @@ const RULES_COLUMNS = [
 ]
 
 const CART_COLUMNS = [
-  { key: 'itemId', label: 'Item' },
+  {
+    key: 'itemId',
+    label: 'Item',
+    render: (v) => <span className="badge badge--rule-id">{v}</span>,
+  },
   { key: 'product', label: 'Product' },
-  { key: 'brand', label: 'Brand' },
-  { key: 'platform', label: 'Platform' },
-  { key: 'basePrice', label: 'Base Price', render: (v) => <MoneyDisplay amount={v} /> },
+  {
+    key: 'brand',
+    label: 'Brand',
+    render: (v) => <span className="badge badge--brand">{v}</span>,
+  },
+  {
+    key: 'platform',
+    label: 'Platform',
+    render: (v) => <span className="badge badge--platform">{v}</span>,
+  },
+  {
+    key: 'basePrice',
+    label: 'Base Price',
+    render: (v) => <MoneyDisplay amount={v} />,
+  },
 ]
 
-const S = {
-  page: { minHeight: '100vh', background: '#f7f7f9', fontFamily: 'Arial, sans-serif' },
-  header: {
-    background: '#131A48',
-    padding: '0.85rem 2rem',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  logoTxt: {
-    fontFamily: 'Georgia, serif',
-    fontSize: 17,
-    fontWeight: 700,
-    color: '#fff',
-    letterSpacing: '-0.02em',
-  },
-  logoSpan: { color: '#FF5800' },
-  headerSub: {
-    fontSize: 11,
-    color: 'rgba(255,255,255,0.5)',
-    textTransform: 'uppercase',
-    letterSpacing: '0.07em',
-  },
-  main: { maxWidth: 960, margin: '0 auto', padding: '1.8rem 1.5rem' },
-  section: {
-    background: '#fff',
-    border: '1px solid #CECECE',
-    borderRadius: 6,
-    padding: '1.2rem 1.4rem',
-    marginBottom: '1.2rem',
-  },
-  sectionTitle: {
-    fontFamily: 'Georgia, serif',
-    fontWeight: 700,
-    fontSize: 14,
-    color: '#131A48',
-    marginBottom: '0.7rem',
-    paddingBottom: 6,
-    borderBottom: '2px solid #FF5800',
-    display: 'inline-block',
-  },
+function RulesIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+function CartIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4H6zM3 6h18M16 10a4 4 0 01-8 0"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+function SavingsIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M12 2v20M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+function TotalIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M18 20V10M12 20V4M6 20v-6"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+function CheckIcon() {
+  return (
+    <svg className="icon-check" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M20 6L9 17l-5-5"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+function EmptyIllustration() {
+  return (
+    <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      <rect x="12" y="16" width="40" height="32" rx="6" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M12 28h40" stroke="currentColor" strokeWidth="1.5" />
+      <rect x="20" y="36" width="16" height="3" rx="1.5" fill="currentColor" opacity="0.35" />
+      <rect x="20" y="42" width="24" height="3" rx="1.5" fill="currentColor" opacity="0.2" />
+      <circle cx="48" cy="14" r="8" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M45 14h6M48 11v6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  )
 }
 
 export default function App() {
@@ -116,20 +205,151 @@ export default function App() {
   }
 
   const canCalculate = rules.length > 0 && cartItems.length > 0
+  const hasAnyData = rules.length > 0 || cartItems.length > 0
+
+  const totalSavings = summary
+    ? summary.items.reduce((s, i) => s + i.totalDiscount, 0) + (summary.cartOffer?.discountAmount ?? 0)
+    : null
+  const finalTotal = summary?.finalTotal ?? null
 
   return (
-    <div style={S.page}>
-      <header style={S.header} className="app-header">
-        <div style={S.logoTxt}>
-          O<span style={S.logoSpan}>pp</span>tra
-        </div>
-        <div style={S.headerSub}>Discount Engine</div>
-      </header>
+    <div className="app">
+      <main className="app-main" id="main-content">
+        <header className="hero">
+          <span className="hero__eyebrow">Pricing Engine</span>
+          <h1 className="hero__title">Discount Engine</h1>
+          <p className="hero__subtitle">Commerce discount operations dashboard</p>
+          <p className="hero__description">
+            Upload discount rules and shopping cart CSVs to calculate the optimal customer pricing
+            using stackable and non-stackable discount rules.
+          </p>
+          <div className="hero__actions">
+            <button
+              type="button"
+              className="btn-calculate"
+              onClick={handleCalculate}
+              disabled={!canCalculate}
+              aria-disabled={!canCalculate}
+              aria-describedby={!canCalculate ? 'calculate-hint' : undefined}
+            >
+              Calculate Discounts
+            </button>
+            {!canCalculate && (
+              <p className="hero__hint" id="calculate-hint">
+                Upload both CSV files to enable calculation
+              </p>
+            )}
+          </div>
+        </header>
 
-      <main style={S.main} className="app-main">
-        <div className="upload-grid">
-          <section style={S.section}>
-            <div style={S.sectionTitle}>Discount Rules</div>
+        <section className="kpi-grid page-section" aria-label="Dashboard metrics">
+          <article className="kpi-card" aria-labelledby="kpi-rules">
+            <div className="kpi-card__icon kpi-card__icon--rules" aria-hidden="true">
+              <RulesIcon />
+            </div>
+            <div className="kpi-card__content">
+              <p id="kpi-rules" className="kpi-card__label">
+                Rules
+              </p>
+              <p className="kpi-card__value" aria-label={`${rules.length} rules loaded`}>
+                {rules.length}
+              </p>
+            </div>
+          </article>
+          <article className="kpi-card" aria-labelledby="kpi-cart">
+            <div className="kpi-card__icon kpi-card__icon--cart" aria-hidden="true">
+              <CartIcon />
+            </div>
+            <div className="kpi-card__content">
+              <p id="kpi-cart" className="kpi-card__label">
+                Cart Items
+              </p>
+              <p className="kpi-card__value" aria-label={`${cartItems.length} cart items`}>
+                {cartItems.length}
+              </p>
+            </div>
+          </article>
+          <article className="kpi-card" aria-labelledby="kpi-savings">
+            <div className="kpi-card__icon kpi-card__icon--savings" aria-hidden="true">
+              <SavingsIcon />
+            </div>
+            <div className="kpi-card__content">
+              <p id="kpi-savings" className="kpi-card__label">
+                Savings
+              </p>
+              <p
+                className={`kpi-card__value ${totalSavings != null ? 'kpi-card__value--success' : 'kpi-card__value--muted'}`}
+              >
+                {totalSavings != null ? (
+                  <MoneyDisplay amount={totalSavings} bold color="#059669" />
+                ) : (
+                  '—'
+                )}
+              </p>
+            </div>
+          </article>
+          <article className="kpi-card" aria-labelledby="kpi-total">
+            <div className="kpi-card__icon kpi-card__icon--total" aria-hidden="true">
+              <TotalIcon />
+            </div>
+            <div className="kpi-card__content">
+              <p id="kpi-total" className="kpi-card__label">
+                Final Total
+              </p>
+              <p
+                className={`kpi-card__value ${finalTotal != null ? 'kpi-card__value--success' : 'kpi-card__value--muted'}`}
+              >
+                {finalTotal != null ? (
+                  <MoneyDisplay amount={finalTotal} bold color="#059669" />
+                ) : (
+                  '—'
+                )}
+              </p>
+            </div>
+          </article>
+        </section>
+
+        {!hasAnyData && (
+          <section className="empty-state page-section" aria-labelledby="empty-state-title">
+            <div className="empty-state__icon-ring">
+              <EmptyIllustration />
+            </div>
+            <h2 id="empty-state-title" className="empty-state__title">
+              Start with your CSV files
+            </h2>
+            <p className="empty-state__text">Upload discount rules and cart data to preview inputs and calculate optimized pricing.</p>
+            <ol className="empty-state__steps">
+              <li className="empty-state__step">
+                <span className="empty-state__step-num" aria-hidden="true">
+                  1
+                </span>
+                Upload rules.csv
+              </li>
+              <li className="empty-state__step">
+                <span className="empty-state__step-num" aria-hidden="true">
+                  2
+                </span>
+                Upload cart.csv
+              </li>
+              <li className="empty-state__step">
+                <span className="empty-state__step-num" aria-hidden="true">
+                  3
+                </span>
+                Calculate discounts
+              </li>
+            </ol>
+          </section>
+        )}
+
+        <section className="upload-grid page-section" aria-label="File uploads">
+          <div className="upload-card-wrapper">
+            <div className="upload-card-wrapper__header">
+              <div>
+                <h2 className="upload-card-wrapper__title">Discount Rules</h2>
+                <p className="upload-card-wrapper__hint">Discount scope, value, thresholds, and stacking</p>
+              </div>
+              <span className="upload-card-wrapper__badge">CSV</span>
+            </div>
             <CsvUploader
               label="rules.csv"
               description="Drag & drop or click to upload discount rules"
@@ -139,18 +359,26 @@ export default function App() {
             />
             <ErrorBanner errors={rulesErrors} />
             {rules.length > 0 && (
-              <div style={{ marginTop: '0.75rem' }}>
-                <div style={{ fontSize: 11, color: '#888', marginBottom: 4 }}>
-                  {rules.length} rule{rules.length > 1 ? 's' : ''} loaded
-                  {rulesFileName ? ` · ${rulesFileName}` : ''}
+              <>
+                <div className="upload-card-wrapper__status" aria-live="polite">
+                  <CheckIcon />
+                  {rules.length} rule{rules.length !== 1 ? 's' : ''} loaded
                 </div>
-                <DataTable columns={RULES_COLUMNS} rows={rules} />
-              </div>
+                {rulesFileName && (
+                  <p className="upload-card-wrapper__filename">{rulesFileName}</p>
+                )}
+              </>
             )}
-          </section>
+          </div>
 
-          <section style={S.section}>
-            <div style={S.sectionTitle}>Cart Items</div>
+          <div className="upload-card-wrapper">
+            <div className="upload-card-wrapper__header">
+              <div>
+                <h2 className="upload-card-wrapper__title">Cart Items</h2>
+                <p className="upload-card-wrapper__hint">Products, brands, platforms, and base prices</p>
+              </div>
+              <span className="upload-card-wrapper__badge">CSV</span>
+            </div>
             <CsvUploader
               label="cart.csv"
               description="Drag & drop or click to upload cart items"
@@ -160,35 +388,65 @@ export default function App() {
             />
             <ErrorBanner errors={cartErrors} />
             {cartItems.length > 0 && (
-              <div style={{ marginTop: '0.75rem' }}>
-                <div style={{ fontSize: 11, color: '#888', marginBottom: 4 }}>
-                  {cartItems.length} item{cartItems.length > 1 ? 's' : ''} loaded
-                  {cartFileName ? ` · ${cartFileName}` : ''}
+              <>
+                <div className="upload-card-wrapper__status" aria-live="polite">
+                  <CheckIcon />
+                  {cartItems.length} cart item{cartItems.length !== 1 ? 's' : ''} loaded
                 </div>
-                <DataTable columns={CART_COLUMNS} rows={cartItems} />
-              </div>
+                {cartFileName && (
+                  <p className="upload-card-wrapper__filename">{cartFileName}</p>
+                )}
+              </>
             )}
-          </section>
-        </div>
+          </div>
+        </section>
 
-        <div style={{ textAlign: 'center', marginBottom: '1.2rem' }}>
-          <button
-            type="button"
-            className="btn-calculate"
-            onClick={handleCalculate}
-            disabled={!canCalculate}
-          >
-            Calculate Discounts
-          </button>
-          {!canCalculate && (
-            <div style={{ fontSize: 11, color: '#888', marginTop: 6 }}>
-              Upload both files to calculate
+        {rules.length > 0 && (
+          <section className="section-card page-section" aria-labelledby="rules-table-heading">
+            <div className="section-card__header">
+              <h2 id="rules-table-heading" className="section-card__title">
+                Rules
+              </h2>
+              <span className="section-card__meta">
+                {rules.length} rule{rules.length !== 1 ? 's' : ''}
+              </span>
             </div>
-          )}
-        </div>
+            <DataTable columns={RULES_COLUMNS} rows={rules} />
+          </section>
+        )}
+
+        {cartItems.length > 0 && (
+          <section className="section-card page-section" aria-labelledby="cart-table-heading">
+            <div className="section-card__header">
+              <h2 id="cart-table-heading" className="section-card__title">
+                Cart
+              </h2>
+              <span className="section-card__meta">
+                {cartItems.length} item{cartItems.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+            <DataTable columns={CART_COLUMNS} rows={cartItems} />
+          </section>
+        )}
 
         {summary && <CartSummaryPanel summary={summary} />}
       </main>
+
+      <footer className="app-footer">
+        <p className="app-footer__text">
+          Built with React
+          <span className="app-footer__divider" aria-hidden="true">
+            ·
+          </span>
+          Vite
+          <span className="app-footer__divider" aria-hidden="true">
+            ·
+          </span>
+          JavaScript
+          <br />
+          <span className="app-footer__brand">Discount Engine Assignment</span>
+        </p>
+      </footer>
     </div>
   )
 }

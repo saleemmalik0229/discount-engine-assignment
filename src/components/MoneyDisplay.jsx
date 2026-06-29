@@ -5,11 +5,13 @@ import { formatINR } from '../utils/currency.js'
  * @param {{ amount: number, bold?: boolean, color?: string, style?: import('react').CSSProperties }} props
  */
 export default function MoneyDisplay({ amount, bold = false, color, style = {} }) {
+  const className = ['money-display', bold && 'money-display--bold'].filter(Boolean).join(' ')
+
   return (
     <span
+      className={className}
       style={{
-        fontWeight: bold ? 700 : 400,
-        color: color ?? '#131A48',
+        color: color ?? undefined,
         ...style,
       }}
     >

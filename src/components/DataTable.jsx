@@ -6,42 +6,43 @@
  * @param {{ columns: Array<{ key: string, label: string, render?: (value: *, row: *) => import('react').ReactNode }>, rows: Object[], emptyMessage?: string }} props
  */
 
+function EmptyTableIcon() {
+  return (
+    <svg
+      className="data-table-empty__icon"
+      width="32"
+      height="32"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M3 6h18M3 12h18M3 18h18"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
 export default function DataTable({ columns, rows, emptyMessage = 'No data loaded.' }) {
   if (!rows || rows.length === 0) {
     return (
-      <div
-        style={{
-          padding: '1rem',
-          textAlign: 'center',
-          color: '#888',
-          fontSize: 13,
-          border: '1px solid #CECECE',
-          borderRadius: 4,
-        }}
-      >
-        {emptyMessage}
+      <div className="data-table-empty" role="status">
+        <EmptyTableIcon />
+        <span>{emptyMessage}</span>
       </div>
     )
   }
 
   return (
-    <div style={{ overflowX: 'auto', border: '1px solid #CECECE', borderRadius: 4 }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+    <div className="data-table-wrap" tabIndex={0} role="region" aria-label="Scrollable data table">
+      <table className="data-table">
         <thead>
-          <tr style={{ background: '#131A48', color: '#fff' }}>
+          <tr>
             {columns.map((col) => (
-              <th
-                key={col.key}
-                style={{
-                  padding: '7px 10px',
-                  textAlign: 'left',
-                  fontWeight: 700,
-                  fontSize: 11,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.04em',
-                  whiteSpace: 'nowrap',
-                }}
-              >
+              <th key={col.key} scope="col">
                 {col.label}
               </th>
             ))}
@@ -49,12 +50,9 @@ export default function DataTable({ columns, rows, emptyMessage = 'No data loade
         </thead>
         <tbody>
           {rows.map((row, i) => (
-            <tr
-              key={i}
-              style={{ background: i % 2 === 0 ? '#fff' : '#fafafa', borderBottom: '1px solid #f0f0f0' }}
-            >
+            <tr key={i}>
               {columns.map((col) => (
-                <td key={col.key} style={{ padding: '6px 10px', color: '#131A48', verticalAlign: 'top' }}>
+                <td key={col.key}>
                   {col.render ? col.render(row[col.key], row) : row[col.key] ?? '—'}
                 </td>
               ))}
