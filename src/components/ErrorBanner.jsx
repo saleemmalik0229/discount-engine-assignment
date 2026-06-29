@@ -1,6 +1,9 @@
 /**
  * ErrorBanner.jsx
- * Displays a list of parse or validation errors.
+ *
+ * Displays parse or validation errors from CSV adapters.
+ *
+ * @param {{ errors: string[] }} props
  */
 
 export default function ErrorBanner({ errors }) {

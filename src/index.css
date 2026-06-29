@@ -1,2 +1,52 @@
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.upload-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 720px) {
+  .upload-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .app-header {
+    padding: 0.85rem 1rem !important;
+  }
+
+  .app-main {
+    padding: 1.2rem 1rem !important;
+  }
+}
+
+.btn-calculate {
+  background: #FF5800;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.65rem 2rem;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background 0.15s;
+}
+
+.btn-calculate:hover:not(:disabled) {
+  background: #e04e00;
+}
+
+.btn-calculate:disabled {
+  background: #CECECE;
+  cursor: not-allowed;
+}

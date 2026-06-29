@@ -1,8 +1,9 @@
 /**
  * DataTable.jsx
  *
- * Renders a simple table from an array of objects.
- * Columns are defined as [{ key, label, render? }].
+ * Reusable table driven by column config with optional cell renderers.
+ *
+ * @param {{ columns: Array<{ key: string, label: string, render?: (value: *, row: *) => import('react').ReactNode }>, rows: Object[], emptyMessage?: string }} props
  */
 
 export default function DataTable({ columns, rows, emptyMessage = 'No data loaded.' }) {
