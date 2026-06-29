@@ -8,7 +8,7 @@ Customer-facing cart pricing engine for the Opptra FDE Intern assignment. Calcul
 
 Replace the comment above with your deployed URL after publishing to Vercel or Netlify, e.g.:
 
-**Live app:** https://your-app.vercel.app
+**Live App:** https://discount-engine-assignment.vercel.app/
 
 ## Running locally
 
