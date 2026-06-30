@@ -1,7 +1,7 @@
 {
   "name": "discount-engine",
   "version": "1.0.0",
-  "description": "Opptra FDE Intern Assignment — Discount Engine",
+  "description": "A responsive discount pricing engine for cart evaluation with item-level and cart-level rules",
   "type": "module",
   "author": "Syed Saleem Malik <mbgazeem422@gmail.com>",
   "repository": {
@@ -18,7 +18,9 @@
     "assignment",
     "react",
     "vitest",
-    "csv-parser"
+    "csv-parser",
+    "e-commerce",
+    "pricing"
   ],
   "scripts": {
     "dev": "vite",
