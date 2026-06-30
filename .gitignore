@@ -31,3 +31,17 @@ pnpm-debug.log*
 # OS files
 .DS_Store
 Thumbs.db
+ehthumbs.db
+Icon?
+
+# Logs and databases
+*.log
+*.sqlite
+
+# Testing and Coverage
+coverage/
+*.lcov
+.nyc_output/
+
+# IDE and history
+.history/

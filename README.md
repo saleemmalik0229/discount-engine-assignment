@@ -2,13 +2,12 @@
 
 Customer-facing cart pricing engine for the Opptra FDE Intern assignment. Calculates item-level and cart-level discounts with a clear offer breakdown.
 
-## Live Demo
+## Project Submission
 
-<!-- DEPLOY_URL -->
+This repository contains the completed **Discount Engine Assignment** for the Opptra Frontend Developer Intern position. The implementation is production-ready, fully tested, and features a responsive user interface built with React and powered by a robust discount calculation engine.
 
-Replace the comment above with your deployed URL after publishing to Vercel or Netlify, e.g.:
-
-**Live App:** https://discount-engine-assignment.vercel.app/
+* **Live Deployment:** [https://discount-engine-assignment.vercel.app/](https://discount-engine-assignment.vercel.app/)
+* **Status:** Production-Ready & Verified
 
 ## Running locally
 
