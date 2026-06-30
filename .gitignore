@@ -45,3 +45,10 @@ coverage/
 
 # IDE and history
 .history/
+
+# ESLint and Prettier
+.eslintcache
+
+# Package managers cache
+.pnpm-store/
+.npm/
